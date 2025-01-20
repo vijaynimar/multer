@@ -39,6 +39,7 @@ app.post("/upload", upload.single("fileupload"), async (req, res) => {
         return res.status(400).json({ error: "No file uploaded" });
     }
     const x=await v2.uploader.upload(req.file.path)
+    fs.unlinkSync(req.file.path)
     return res.json({ message: "File uploaded successfully", file: x.secure_url });
 });
 
