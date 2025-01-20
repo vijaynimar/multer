@@ -4,66 +4,98 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Multer File Upload</title>
-    <link rel="stylesheet" href="styles.css">
     <style>
         /* Global Styles */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f7fc;
-}
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(45deg, #6a11cb, #2575fc); /* Gradient background */
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite; /* Animated gradient */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
 
-.container {
-    max-width: 500px;
-    margin: 100px auto;
-    padding: 20px;
-    background-color: white;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    text-align: center;
-}
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
-h1 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #333;
-}
+        .container {
+            max-width: 500px;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            text-align: center;
+            transform: rotateX(10deg);
+            transition: transform 0.3s ease-in-out;
+        }
 
-input[type="file"] {
-    display: block;
-    margin: 20px auto;
-    padding: 10px;
-    border: 2px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-}
+        .container:hover {
+            transform: rotateX(0deg);
+        }
 
-button {
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-}
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #333;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+        }
 
-button:hover {
-    background-color: #45a049;
-}
+        input[type="file"] {
+            display: block;
+            margin: 20px auto;
+            padding: 15px;
+            border: 2px solid #4CAF50;
+            border-radius: 6px;
+            font-size: 16px;
+            background-color: #f5f5f5;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
 
-#fileName {
-    margin-top: 20px;
-    font-size: 16px;
-    color: #333;
-}
+        input[type="file"]:hover {
+            border-color: #45a049;
+            background-color: #e0e0e0;
+        }
 
-#responseMessage {
-    margin-top: 20px;
-    font-size: 16px;
-    color: #007BFF;
-}
+        button {
+            padding: 12px 25px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            background-color: #45a049;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        #fileName {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        #responseMessage {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #007BFF;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -76,27 +108,49 @@ button:hover {
         <div id="fileName"></div>
         <div id="responseMessage"></div>
     </div>
-    <script src="script.js"></script>
+
+    <script>
+        // Adding an event listener to handle form submission
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            // Check if a file is selected
+            if (!file) {
+                document.getElementById("responseMessage").textContent = 'Please select a file.';
+                return;
+            }
+
+            // Show the selected file name
+            document.getElementById("fileName").textContent = 'Selected File: ' + file.name;
+
+            // Create a FormData object and append the file
+            const formData = new FormData();
+            formData.append('fileupload', file);
+
+            // Send the form data to the server via fetch API
+            fetch('https://multervijaynimar.onrender.com/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Backend Response:', data);  // Log the response
+
+                // Check for errors in the response
+                if (data.error) {
+                    document.getElementById("responseMessage").textContent = 'Error: ' + data.error;
+                } else {
+                    document.getElementById("responseMessage").textContent = 'File uploaded successfully';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById("responseMessage").textContent = 'Network error: ' + error;
+            });
+        });
+    </script>
 </body>
 </html>
-<script>
-    fetch('https://multervijaynimar.onrender.com/upload', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Backend Response:', data);  // Log the response
-        if (data.error) {
-            document.getElementById("responseMessage").textContent = 'Error: ' + data.error;
-        } else {
-            document.getElementById("responseMessage").textContent = 'File uploaded successfully';
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        document.getElementById("responseMessage").textContent = 'Network error: ' + error;
-    });
-    
-    
-</script>
