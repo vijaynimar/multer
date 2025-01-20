@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multer File Upload</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Global Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7fc;
+}
+
+.container {
+    max-width: 500px;
+    margin: 100px auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+input[type="file"] {
+    display: block;
+    margin: 20px auto;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+#fileName {
+    margin-top: 20px;
+    font-size: 16px;
+    color: #333;
+}
+
+#responseMessage {
+    margin-top: 20px;
+    font-size: 16px;
+    color: #007BFF;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Multer File Upload</h1>
+        <form id="uploadForm" action="http://localhost:3000/uploads" enctype="multipart/form-data" method="POST">
+            <input type="file" name="fileupload" id="fileInput" placeholder="Upload file">
+            <button type="submit">Upload</button>
+        </form>
+        <div id="fileName"></div>
+        <div id="responseMessage"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+<script>
+    document.getElementById("uploadForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent the form from submitting normally
+    
+        let fileInput = document.getElementById("fileInput");
+        let fileName = fileInput.files[0] ? fileInput.files[0].name : "No file chosen";
+    
+        // Display file name below the form
+        document.getElementById("fileName").textContent = "Selected file: " + fileName;
+    
+        // Prepare FormData to send the file
+        const formData = new FormData();
+        formData.append('fileupload', fileInput.files[0]);
+    
+        // Send the file to the server using Fetch API
+        fetch('http://localhost:2001/upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if (data.message) {
+                document.getElementById("responseMessage").textContent = 'File uploaded successfully: ' + data.file.filename;
+            } else {
+                document.getElementById("responseMessage").textContent = 'Error uploading file.';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById("responseMessage").textContent = 'Error uploading file.';
+        });
+    });
+    
+</script>

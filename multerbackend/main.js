@@ -2,12 +2,14 @@ import express from "express"
 import multer from "multer"
 import fs from "fs"
 import path from "path"
+import cors from "cors"
 import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);  // Now we have the __dirname equivalent
 
 
 const app=express()
+app.use(cors())
 const uploadDirectory = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDirectory)) {
     fs.mkdirSync(uploadDirectory);
