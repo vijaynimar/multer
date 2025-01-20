@@ -31,7 +31,14 @@ const storage=multer.diskStorage({
         cb(null,Date.now()+file.originalname)
     }
 })
-const upload=multer({storage:storage})
+
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 10 * 1024 * 1024 }, // Limit file size to 10MB
+    fileFilter: (req, file, cb) => {
+        cb(null, true); // Accept all file types
+    }
+})
 
 app.post("/upload", upload.single("fileupload"), async (req, res) => {
     // console.log("Received file:", req.file);  // Log the file object
