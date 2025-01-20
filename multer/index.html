@@ -69,7 +69,7 @@ button:hover {
 <body>
     <div class="container">
         <h1>Multer File Upload</h1>
-        <form id="uploadForm" action="http://localhost:3000/uploads" enctype="multipart/form-data" method="POST">
+        <form id="uploadForm" enctype="multipart/form-data" method="POST">
             <input type="file" name="fileupload" id="fileInput" placeholder="Upload file">
             <button type="submit">Upload</button>
         </form>
@@ -80,37 +80,23 @@ button:hover {
 </body>
 </html>
 <script>
-    document.getElementById("uploadForm").addEventListener("submit", function(event) {
-        event.preventDefault(); // Prevent the form from submitting normally
-    
-        let fileInput = document.getElementById("fileInput");
-        let fileName = fileInput.files[0] ? fileInput.files[0].name : "No file chosen";
-    
-        // Display file name below the form
-        document.getElementById("fileName").textContent = "Selected file: " + fileName;
-    
-        // Prepare FormData to send the file
-        const formData = new FormData();
-        formData.append('fileupload', fileInput.files[0]);
-    
-        // Send the file to the server using Fetch API
-        fetch('http://localhost:2001/upload', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            if (data.message) {
-                document.getElementById("responseMessage").textContent = 'File uploaded successfully: ' + data.file.filename;
-            } else {
-                document.getElementById("responseMessage").textContent = 'Error uploading file.';
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            document.getElementById("responseMessage").textContent = 'Error uploading file.';
-        });
+    fetch('https://multervijaynimar.onrender.com/upload', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Backend Response:', data);  // Log the response
+        if (data.error) {
+            document.getElementById("responseMessage").textContent = 'Error: ' + data.error;
+        } else {
+            document.getElementById("responseMessage").textContent = 'File uploaded successfully';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById("responseMessage").textContent = 'Network error: ' + error;
     });
+    
     
 </script>

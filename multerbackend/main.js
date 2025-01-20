@@ -26,13 +26,14 @@ const storage=multer.diskStorage({
 })
 const upload=multer({storage:storage})
 
-app.post("/upload",upload.single("fileupload"),async(req,res)=>{
-    try{
-        return res.send("file uploaded")
-    }catch(err){
-        return res.send("error")
+app.post("/upload", upload.single("fileupload"), async (req, res) => {
+    console.log("Received file:", req.file);  // Log the file object
+    if (!req.file) {
+        console.log("No file uploaded");
+        return res.status(400).json({ error: "No file uploaded" });
     }
-})
+    return res.json({ message: "File uploaded successfully", file: req.file });
+});
 
 
 app.listen(2001,()=>{
