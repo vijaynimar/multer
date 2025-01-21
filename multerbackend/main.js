@@ -13,11 +13,10 @@ const app = express();
 app.use(cors());
 
 v2.config({
-  cloud_name: 'ddinspraf',
-  api_key: '256423694739518',
-  api_secret: 'xK4hP00I1_KnxF6kqRRge-VZJ44'
+  cloud_name: 'div73bxig',
+  api_key: '934178561787478',
+  api_secret: 's6RYiLHbAaMlM5N2EBYByjDtIJo'
 });
-
 const uploadDirectory = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDirectory)) {
   fs.mkdirSync(uploadDirectory);
