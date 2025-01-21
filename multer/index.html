@@ -96,6 +96,28 @@
             color: #007BFF;
             font-weight: bold;
         }
+
+        /* Progress bar style */
+        #progressContainer {
+            width: 100%;
+            background-color: #f3f3f3;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        #progressBar {
+            width: 0;
+            height: 10px;
+            background-color: #4CAF50;
+            border-radius: 8px;
+        }
+
+        #percentage {
+            margin-top: 5px;
+            font-size: 16px;
+            color: #333;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -107,6 +129,11 @@
         </form>
         <div id="fileName"></div>
         <div id="responseMessage"></div>
+        <!-- Progress Bar Container -->
+        <div id="progressContainer" style="display: none;">
+            <div id="progressBar"></div>
+        </div>
+        <div id="percentage" style="display: none;"></div>
     </div>
 
     <script>
@@ -126,30 +153,48 @@
             // Show the selected file name
             document.getElementById("fileName").textContent = 'Selected File: ' + file.name;
 
+            // Show the progress bar
+            document.getElementById("progressContainer").style.display = 'block';
+            document.getElementById("percentage").style.display = 'block';
+
             // Create a FormData object and append the file
             const formData = new FormData();
             formData.append('fileupload', file);
 
-            // Send the form data to the server via fetch API
-            fetch('https://multervijaynimar.onrender.com/upload', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Backend Response:', data);  // Log the response
+            // Create a new XMLHttpRequest object
+            const xhr = new XMLHttpRequest();
 
-                // Check for errors in the response
-                if (data.error) {
-                    document.getElementById("responseMessage").textContent = 'Error: ' + data.error;
-                } else {
-                    document.getElementById("responseMessage").textContent = 'File uploaded successfully';
+            // Open a POST request
+            xhr.open('POST', 'https://multervijaynimar.onrender.com/upload', true);
+
+            // Track progress
+            xhr.upload.onprogress = function(event) {
+                if (event.lengthComputable) {
+                    // Calculate progress percentage
+                    const percent = (event.loaded / event.total) * 100;
+
+                    // Update progress bar width
+                    document.getElementById('progressBar').style.width = percent + '%';
+                    document.getElementById('percentage').textContent = Math.round(percent) + '%';
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                document.getElementById("responseMessage").textContent = 'Network error: ' + error;
-            });
+            };
+
+            // Handle the response
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    // Handle success response
+                    document.getElementById("responseMessage").textContent = 'File uploaded successfully';
+                } else {
+                    // Handle error response
+                    document.getElementById("responseMessage").textContent = 'Error: ' + xhr.responseText;
+                }
+
+                // Hide the progress bar after upload is complete
+                document.getElementById("progressContainer").style.display = 'none';
+            };
+
+            // Send the request with FormData
+            xhr.send(formData);
         });
     </script>
 </body>

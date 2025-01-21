@@ -1,0 +1,86 @@
+## qs1-------------------
+db.product.aggregate([
+    {
+        $match:{
+            price:{$gte:100}
+        }
+    }
+])
+
+
+## qs2--------------------------
+db.product.aggregate([
+    {
+        $match:{
+            manufacturer:{$ne:"Apple"}
+        }
+    }
+])
+
+
+## qs3-----------------------------
+db.product.aggregate([
+    {
+        $match:{
+            tags:{$nin:["wireless","bluetooth"]}
+        }
+    }
+])
+
+
+## qs4------------------------
+db.product.aggregate([
+    {
+        $match:{
+            price:{$gt:50},
+            in_stock:true
+        }
+    }
+])
+
+
+## qs5--------------------------
+db.product.aggregate([
+    {
+        $match:{
+            $or:[
+                {in_stock:false},
+                {price:{$gt:300}}
+            ]
+        }
+    }
+])              
+
+
+## qs6--------------------------
+db.product.aggregate([
+    {
+        $match:{
+            tags:{$size:4}
+        }
+    }
+])
+
+
+## qs7--------------------------
+db.product.aggregate([
+    {
+        $match:{
+            in_stock:true
+        }
+    },
+    {
+        $count:"total"
+    }
+])
+
+## qs8---------------------------------
+db.product.updateMany({name:"Bluetooth Mouse"},{$set:{price:34.99}})
+
+
+##qs9----------------------------------
+db.product.updateMany({tags:"electronics"},{$set:{in_stock:true}})
+
+
+## qs10--------------------------------
+db.product.deleteOne({name:"LED Lamp"})
