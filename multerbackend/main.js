@@ -13,9 +13,9 @@ const app = express();
 app.use(cors());
 
 v2.config({
-  cloud_name: 'div73bxig',
-  api_key: '934178561787478',
-  api_secret: 's6RYiLHbAaMlM5N2EBYByjDtIJo'
+  cloud_name: 'ddinspraf',
+  api_key: '256423694739518',
+  api_secret: 'xK4hP00I1_KnxF6kqRRge-VZJ44'
 });
 
 const uploadDirectory = path.join(__dirname, 'uploads');
@@ -28,17 +28,11 @@ const storage = multer.diskStorage({
     cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Retain file extension
+    cb(null, Date.now() + path.extname(file.originalname))
   }
 });
 
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 30 * 1024 * 1024 }, // Limit file size to 30MB
-  fileFilter: (req, file, cb) => {
-    cb(null, true); // Allow all file types for now
-  }
-});
+const upload = multer({storage: storage});
 
 app.post("/upload", upload.single("fileupload"), async (req, res) => {
   if (!req.file) {
@@ -46,17 +40,18 @@ app.post("/upload", upload.single("fileupload"), async (req, res) => {
   }
 
   try {
-    const uploadedFile = await v2.uploader.upload(req.file.path, {
-      resource_type: "auto" // Auto detect file type (images, videos, documents, etc.)
-    });
-    fs.unlinkSync(req.file.path); // Clean up the local file after uploading to Cloudinary
+    const uploadedFile = await v2.uploader.upload(req.file.path);
+    fs.unlinkSync(req.file.path);
     return res.json({
       message: "File uploaded successfully",
       fileUrl: uploadedFile.secure_url
     });
   } catch (error) {
     console.error("Upload Error:", error);
-    return res.status(500).json({ error: "File upload failed", details: error.message });
+    return res.status(500).json({
+      error: "File upload failed",
+      details: error
+    });
   }
 });
 
